@@ -13,9 +13,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right"
         android:layout_margin="10dp"
-        android:text="+"
         android:onClick="naviToAdd"
-        />
+        android:text="+" />
 
 
     <!--add a line-->
@@ -23,7 +22,14 @@
     <View
         android:layout_width="fill_parent"
         android:layout_height="1px"
-        android:background="#333333"
         android:layout_margin="5dp"
-        />
+        android:background="#333333" />
+
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+    </ListView>
 </LinearLayout>

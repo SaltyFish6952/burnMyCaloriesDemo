@@ -22,6 +22,10 @@ public class ManageActivity extends AppCompatActivity {
         Intent intent = new Intent(ManageActivity.this,AddDateActivity.class);
         startActivity(intent);
 
-
     }
+
+
+
+
+
 }
