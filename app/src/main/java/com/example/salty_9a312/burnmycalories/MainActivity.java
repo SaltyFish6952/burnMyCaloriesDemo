@@ -23,6 +23,8 @@ public class MainActivity extends AppCompatActivity {
 
     private DatePickerDialog dp;
     private TextView Date;
+    private long beginTime;
+    private long endTime;
 
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -66,12 +68,25 @@ public class MainActivity extends AppCompatActivity {
                                   int dayOfMonth) {
 
                 c.set(year, month, dayOfMonth);
-                SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd");
+
+                if (R.id.date_begin == id) {
+                    beginTime = c.getTimeInMillis();
+                } else {
+                    endTime = c.getTimeInMillis();
+                }
+
+                if (endTime != 0 && endTime < beginTime) {
+                    Toast.makeText(MainActivity.this, "error! " + beginTime + " and " + endTime, Toast.LENGTH_LONG).show();
+                    return;
+                }
+                
+
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
 
 
-                Toast.makeText(MainActivity.this, "select date is " + format.format(c.getTime()), Toast.LENGTH_LONG).show();
+                //Toast.makeText(MainActivity.this, "select date is " + format.format(c.getTime()), Toast.LENGTH_LONG).show();
 
-                setDate(format.format(c.getTime()),id);
+                setDate(format.format(c.getTime()), id);
 
             }
         }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DAY_OF_MONTH));
@@ -79,10 +94,6 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
-
-
-
 
 
     private void setDate(String date, int whichDate) {
