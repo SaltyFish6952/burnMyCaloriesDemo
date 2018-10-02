@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -25,9 +25,9 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_gravity="center"
             android:onClick="naviToManage"
             android:text="EDIT" />
 
@@ -44,22 +44,22 @@
         <TextView
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
             android:layout_centerVertical="true"
+            android:layout_marginHorizontal="20dp"
             android:text="Begin"
             android:textSize="20sp"
 
             />
 
         <TextView
+            android:id="@+id/date_begin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="5dp"
-            android:text="CLICK"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:id="@+id/date_begin"
+            android:layout_marginEnd="10dp"
             android:onClick="selectDate"
+            android:text="CLICK"
 
             />
 
@@ -75,23 +75,22 @@
         <TextView
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="20dp"
             android:layout_centerVertical="true"
+            android:layout_marginHorizontal="20dp"
             android:text="End"
             android:textSize="20sp"
 
             />
 
         <TextView
+            android:id="@+id/date_end"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
             android:layout_alignParentRight="true"
-            android:layout_marginEnd="5dp"
-            android:text="CLICK"
-            android:id="@+id/date_end"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
             android:onClick="selectDate"
-            />
+            android:text="CLICK" />
 
 
     </RelativeLayout>
@@ -101,9 +100,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end"
         android:layout_marginVertical="15dp"
-        android:text="QUERY"
-
-        />
+        android:onClick="queryFromSQL"
+        android:text="QUERY" />
 
     <com.jjoe64.graphview.GraphView
         android:id="@+id/graph"

@@ -1,5 +1,6 @@
 package com.example.salty_9a312.burnmycalories;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +10,10 @@ import android.widget.Toast;
 
 public class AddDateActivity extends AppCompatActivity {
 
+    String date;
+    int calories;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -16,11 +21,36 @@ public class AddDateActivity extends AppCompatActivity {
     }
 
     public void addData(View view) {
-        DatePicker datePicker = (DatePicker)findViewById(R.id.datepicker);
-        EditText editText = (EditText)findViewById(R.id.editText);
-        Toast.makeText(this,"year:" + datePicker.getYear() + 1 + " "
-                + datePicker.getMonth()  + " " + datePicker.getDayOfMonth()  + " " + editText.getText().toString(),Toast.LENGTH_LONG).show();
+        DatePicker datePicker = (DatePicker) findViewById(R.id.datepicker);
+        EditText editText = (EditText) findViewById(R.id.editText);
+
+        if(editText.getText().toString().equals("")){
+            Toast.makeText(this,"Please input your calorie !",Toast.LENGTH_LONG).show();
+            return;
+        }
 
 
+        date = datePicker.getYear() + "-" + (datePicker.getMonth() + 1) + "-" + datePicker.getDayOfMonth();
+        calories = Integer.parseInt(editText.getText().toString());
+
+
+        Toast.makeText(this, "Save Success!", Toast.LENGTH_LONG).show();
+
+        this.onBackPressed();
+
+    }
+
+    @Override
+    public void onBackPressed() {
+        //super.onBackPressed();
+
+        if(date.equals("") && calories == 0)
+            finish();
+
+        Intent intent = new Intent();
+        intent.putExtra("date", date);
+        intent.putExtra("calories", calories);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 }
