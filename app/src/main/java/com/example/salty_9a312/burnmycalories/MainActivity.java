@@ -14,14 +14,23 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jjoe64.graphview.GraphView;
+import com.jjoe64.graphview.Viewport;
+import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,7 +40,9 @@ public class MainActivity extends AppCompatActivity {
     private long endTime;
     private static final int INIT_VERSION = 1;
     private static DB_Helper dbHelper;
-    private DataPoint[] dataPoints;
+
+    LineGraphSeries<DataPoint> series;
+    GraphView graph;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
@@ -39,21 +50,10 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dbHelper = new DB_Helper(this,INIT_VERSION);
+        dbHelper = new DB_Helper(this, INIT_VERSION);
         dbHelper.getWritableDatabase();
 
-
-        GraphView graph = (GraphView) findViewById(R.id.graph);
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<>(new DataPoint[]{
-                new DataPoint(0, 1),
-                new DataPoint(1, 5),
-                new DataPoint(2, 3),
-                new DataPoint(3, 2),
-                new DataPoint(4, 6)
-        });
-
-        graph.addSeries(series);
-
+        initGraph();
     }
 
     public void naviToManage(View view) {
@@ -89,10 +89,9 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "error! " + beginTime + " and " + endTime, Toast.LENGTH_LONG).show();
                     return;
                 }
-                
+
 
                 SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-
 
 
                 //Toast.makeText(MainActivity.this, "select date is " + format.format(c.getTime()), Toast.LENGTH_LONG).show();
@@ -125,6 +124,11 @@ public class MainActivity extends AppCompatActivity {
         Date beginDate = Calendar.getInstance().getTime();
         Date endDate = Calendar.getInstance().getTime();
         Date tempDate = Calendar.getInstance().getTime();
+        Map<Date, Integer> dateMap = new TreeMap<>();
+        int maxValue = 0;
+        int minValue = 0;
+        Date maxDate = Calendar.getInstance().getTime();
+        Date minDate = Calendar.getInstance().getTime();
 
 
         SQLiteDatabase db = getDB();
@@ -139,11 +143,19 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+
+        //get from SQLite
         Cursor cursor = db.query("Calories",
                 null,
                 null,
                 null, null, null, null);
 
+        cursor.moveToFirst();
+
+        minValue = Integer.parseInt(cursor.getString(cursor.getColumnIndex("calories")));
+
+
+        //select from the area
 
         if (cursor.moveToFirst()) {
             do {
@@ -154,9 +166,18 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                if(tempDate.getTime() >= beginDate.getTime() && tempDate.getTime() <= endDate.getTime())
-                {
+
+                if (tempDate.getTime() >= beginDate.getTime() && tempDate.getTime() <= endDate.getTime()) {
                     //insert into graph
+                    int value = Integer.parseInt(cursor.getString(cursor.getColumnIndex("calories")));
+
+                    if (value >= maxValue)
+                        maxValue = value;
+                    if (value <= minValue)
+                        minValue = value;
+
+                    dateMap.put(tempDate, value);
+
                 }
 
 
@@ -165,6 +186,83 @@ public class MainActivity extends AppCompatActivity {
 
         cursor.close();
 
+        graph.removeAllSeries();
+
+        series = new LineGraphSeries<>();
+
+        Iterator it = dateMap.entrySet().iterator();
+        Date date = Calendar.getInstance().getTime();
+
+        ArrayList<DataPoint> dataPointArrayList = new ArrayList<>();
+
+
+        boolean isFirst = true;
+
+
+        //move dataMap into Arraylist
+
+        while (it.hasNext()) {
+            Map.Entry entry = (Map.Entry) it.next();
+
+
+            date = (Date) entry.getKey();
+            int calories = Integer.parseInt(entry.getValue().toString());
+
+            if (isFirst) {
+                minDate = date;
+                isFirst = false;
+            }
+
+            dataPointArrayList.add(new DataPoint(date, calories));
+
+            if (!it.hasNext())
+                maxDate = date;
+
+        }
+
+
+        //transfer to DataPointArray
+
+        removeGraph();
+
+        addLineGraph(dataPointArrayList, beginDate.getTime(), endDate.getTime());
 
     }
+
+
+    private void initGraph() {
+
+        graph = findViewById(R.id.graph);
+        series = new LineGraphSeries<>();
+        graph.addSeries(series);
+
+
+    }
+
+    public void removeGraph() {
+        graph.removeAllSeries();
+    }
+
+    public void addLineGraph(ArrayList<DataPoint> dataPointArrayList, long minDate, long maxDate) {
+
+        DataPoint[] dpArray = (DataPoint[]) dataPointArrayList.toArray(new DataPoint[dataPointArrayList.size()]);
+        series = new LineGraphSeries<>(dpArray);
+
+        graph.addSeries(series);
+        SimpleDateFormat graphFormat = new SimpleDateFormat("yy/MM/dd");
+
+        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this));
+
+        graph.getGridLabelRenderer().setNumHorizontalLabels(dataPointArrayList.size());
+
+
+        graph.getViewport().setMinX(minDate);
+        graph.getViewport().setMaxX(maxDate);
+        graph.getViewport().setXAxisBoundsManual(true);
+        graph.getGridLabelRenderer().setHumanRounding(false);
+
+
+    }
+
+
 }
