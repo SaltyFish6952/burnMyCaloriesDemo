@@ -24,8 +24,8 @@ public class AddDateActivity extends AppCompatActivity {
         DatePicker datePicker = (DatePicker) findViewById(R.id.datepicker);
         EditText editText = (EditText) findViewById(R.id.editText);
 
-        if(editText.getText().toString().equals("")){
-            Toast.makeText(this,"Please input your calorie !",Toast.LENGTH_LONG).show();
+        if (editText.getText().toString().equals("")) {
+            Toast.makeText(this, "Please input your calorie !", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -44,8 +44,11 @@ public class AddDateActivity extends AppCompatActivity {
     public void onBackPressed() {
         //super.onBackPressed();
 
-        if(date.equals("") && calories == 0)
+        if ((date == null || date.length() == 0) && calories == 0){
+            setResult(RESULT_CANCELED);
             finish();
+        }
+
 
         Intent intent = new Intent();
         intent.putExtra("date", date);

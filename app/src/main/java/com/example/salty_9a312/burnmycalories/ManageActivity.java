@@ -75,8 +75,14 @@ public class ManageActivity extends AppCompatActivity {
         switch (requestCode) {
 
             case REQUEST_CODE:
+
+                if (data == null ||
+                        (data.getStringExtra("date")== null || data.getStringExtra("date").length() == 0)
+                            && data.getIntExtra("calories", 0) == 0)
+                    return;
                 String date = data.getStringExtra("date");
                 int calories = data.getIntExtra("calories", 0);
+
 
 
                 Toast.makeText(this, date + " " + calories, Toast.LENGTH_LONG).show();

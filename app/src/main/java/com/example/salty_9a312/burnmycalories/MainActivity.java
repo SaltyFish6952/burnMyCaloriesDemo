@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if (endTime != 0 && endTime < beginTime) {
-                    Toast.makeText(MainActivity.this, "error! " + beginTime + " and " + endTime, Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, "Please select correct date range !", Toast.LENGTH_LONG).show();
                     return;
                 }
 
@@ -259,7 +259,8 @@ public class MainActivity extends AppCompatActivity {
         graph.getViewport().setMinX(minDate);
         graph.getViewport().setMaxX(maxDate);
         graph.getViewport().setXAxisBoundsManual(true);
-        graph.getGridLabelRenderer().setHumanRounding(false);
+
+        //graph.getGridLabelRenderer().setHumanRounding(false);
 
 
     }
